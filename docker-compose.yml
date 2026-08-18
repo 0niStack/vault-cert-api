@@ -1,0 +1,28 @@
+services:
+  certificate-api:
+    build: .
+    container_name: certificate-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    # No "ports:" section on purpose — port 8080 is only reachable from
+    # other containers on the shared Docker network (e.g. Nginx), never
+    # from the host or the public internet. Uncomment the block below
+    # ONLY for temporary local debugging, then remove it again:
+    #
+    # ports:
+    #   - "127.0.0.1:8080:8080"
+    networks:
+      - vault_net
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=3).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  vault_net:
+    external: true
+    # REPLACE with the actual network name discovered via:
+    #   docker inspect vault --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}'
+    name: REPLACE_WITH_VAULT_DOCKER_NETWORK_NAME
