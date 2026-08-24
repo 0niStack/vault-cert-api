@@ -21,7 +21,7 @@ USER certapi
 # Docker network by service name.
 EXPOSE 8080
 
-# 2 workers is plenty for a low-traffic, read-only certificate endpoint.
+# 1 workers is plenty for a low-traffic, read-only certificate endpoint.
 # UvicornWorker is required to run an ASGI app (FastAPI) under Gunicorn.
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--timeout", "15", \
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "1", "--timeout", "15", \
      "-k", "uvicorn.workers.UvicornWorker", "app:app"]
